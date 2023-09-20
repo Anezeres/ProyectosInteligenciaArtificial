@@ -1,16 +1,42 @@
 from collections import deque
+from Clases import *
+from Funciones import *
 
-def algoritmoAmplitud(casillas, bombero, mapa):
+
+def cicloBombero(mapa):
+
+    casillas, bombero = crearPosiciones(mapa)
+    print("Numero Casillas: ", len(casillas))
+
+    algoritmoAmplitud(casillas,bombero,mapa)
+
+def algoritmoAmplitud(casillas, bombero: Bombero, mapa):
     fila,columna = bombero.getPosiciones()
     tuplaPosicionBombero = [(fila, columna)]
     cola = deque(tuplaPosicionBombero)
-
     colaDespuesBusqueda = busqueda(cola, mapa)
-    posicionesCubetas = posicionesConCubetas(casillas)
-    
-    print("Posiciones con Cubetas: ",posicionesCubetas)
-    
-    buscarBalde(mapa,colaDespuesBusqueda, posicionesCubetas)
+
+    if(bombero.getLitros() == 0):
+        posicionesCubetas = posicionesConCubetas("Cubetas", casillas)
+        
+        print("Posiciones con Cubetas: ",posicionesCubetas)
+        
+        posicionBalde = buscarCelda(mapa,colaDespuesBusqueda, posicionesCubetas)
+
+        print("Posicion Actual: ", posicionBalde)
+
+        nuevoMapa, bomberoCambiado = actualizarMapa(mapa, posicionBalde, bombero)
+
+        print("Litros Bombero: ", bomberoCambiado.getLitros())
+
+        imprimir_matriz(nuevoMapa)
+
+        casillas, _ = crearPosiciones(nuevoMapa)
+        algoritmoAmplitud(casillas,bomberoCambiado,mapa)
+
+    else:
+        posicionesHidrantes = posicionesConCubetas("Hidrante", casillas)
+        print("Posiciones con Hidrantes: ",posicionesHidrantes)
 
     return 0
     
@@ -64,7 +90,7 @@ def filtrarTuplas(disponible,posiciones):
     resultado = []
     for tupla in posiciones:
         posicion = posiciones.index(tupla)  
-        if disponible[posicion] == 0:
+        if disponible[posicion] in [0, 3, 2, 6]:
             resultado.append(tupla)
     return resultado
 
@@ -85,9 +111,14 @@ def agregarElementosCola(cola, elementos):
             elementos_agregados.add(elemento)
 
 
-def posicionesConCubetas(casillas):
-    seleccionadas = [casilla for casilla in casillas if casilla.litros in (1, 2)]
+def posicionesConCubetas(objeto,casillas: Casilla):
 
+    if(objeto == "Cubetas"):
+        seleccionadas = [casilla for casilla in casillas if casilla.litros in (1, 2)]
+    elif(objeto == "Hidrante"):
+        seleccionadas = [casilla for casilla in casillas if casilla.tieneHidrante == True]
+    elif(objeto == "Fuego"):
+        seleccionadas = [casilla for casilla in casillas if casilla.tieneFuego == True]
     posiciones = []
 
     # Recorremos la lista de casillas y agregamos las posiciones a la lista
@@ -103,15 +134,24 @@ def encuentraPosicion(cola, destinos):
     return False
 
 
-def buscarBalde(mapa, posiciones, destino):
+def buscarCelda(mapa, posiciones, destino):
+    print("\n\n\nBuscando Balde") 
+    colaDespuesBusqueda = busqueda(posiciones, mapa)
+
+    if encuentraPosicion(posiciones,destino):
+        print("\n\nEncontré Balde")
+        print("Cola completa: ", posiciones)
+        print("Destino: ", destino)
+
+        posicionesActual = posiciones[0]
+        return posicionesActual
+    else: 
+        print("Cola completa: ", posiciones)
+        print("Destino: ", destino)
+        posicionesActual = buscarCelda(mapa, colaDespuesBusqueda,destino)
+        return posicionesActual
 
 
-    #while not encuentraPosicion(posiciones,destino):
-        colaDespuesBusqueda = busqueda(posiciones, mapa)
 
-        if not encuentraPosicion(posiciones,destino):
-            print("Encontré Balde")
-            print("Cola completa: ", posiciones)
-        else:
-            buscarBalde(mapa, colaDespuesBusqueda, destino)
-        
+
+

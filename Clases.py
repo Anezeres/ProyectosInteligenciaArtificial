@@ -6,12 +6,6 @@ class Casilla:
         self.litros = litros
         self.posicion = posicion
 
-    def quitarLitros(self, cantidad):
-        if self.litros >= cantidad:
-            self.litros -= cantidad
-        else:
-            self.litros = 0
-
     def imprimirAtributos(self):
         print("Tiene Hidrante:", self.tieneHidrante)
         print("Tiene Fuego:", self.tieneFuego)
@@ -41,4 +35,15 @@ class Bombero:
         fila,columna = self.posicion
         return fila,columna;
 
+    def setLitros(self, cantidad):
+        self.litrosCargados = cantidad
+
+    def getLitros(self):
+        return self.litrosCargados
+
+    def quitarLitro(self):
+        if self.litros == 0:
+            print("Debe buscar más Agua")
+        else:
+            self.litros -= 1
 

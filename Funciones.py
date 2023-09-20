@@ -1,6 +1,5 @@
-from Clases import Casilla
 from Clases import Bombero
-from Amplitud import *
+from Clases import Casilla
 
 def imprimir_matriz(matriz):
     for fila in matriz:
@@ -8,20 +7,6 @@ def imprimir_matriz(matriz):
             print(elemento, end=" ")  
         print()
     print("\n")
-
-
-
-def cicloBombero(mapa):
-
-    casillas, bombero = crearPosiciones(mapa)
-    print("Numero Casillas: ", len(casillas))
-
-    algoritmoAmplitud(casillas,bombero,mapa)
-
-    #casillas[0].imprimirAtributos()
-    #bombero.imprimirPosicion()
-    #posicionRaton = [fila, columna]
-    
 
 def crearPosiciones(matriz):
     listaObjetos = []
@@ -38,6 +23,7 @@ def crearPosiciones(matriz):
             listaObjetos.append(objetoActual)
 
     return(listaObjetos, bombero)
+
 
 
 #tieneHidrante, tieneFuego, solido litros, posición
@@ -65,3 +51,34 @@ def crearObjetos(tipoCasilla, fila, columna):
         print(argumentosCasilla)
     return listaDePosiciones;
 
+
+def actualizarMapa(mapaAntiguo, posicion, bombero: Bombero):
+    print("Pos mandada: ",posicion)
+    filaB, columnaB = posicion
+
+    for fila_idx, fila in enumerate(mapaAntiguo):
+        for columna_idx, elemento in enumerate(fila):
+            if(elemento == 5 and [filaB, columnaB] != [fila_idx,columna_idx]):
+                mapaAntiguo[fila_idx][columna_idx] = 0
+            elif(mapaAntiguo[filaB][columnaB] in (6,4,2,3)):
+                nuevoBombero = asignarLitrosAguaBombero(mapaAntiguo[filaB][columnaB],bombero)
+                mapaAntiguo[filaB][columnaB] = 5
+
+
+
+    return mapaAntiguo, nuevoBombero
+
+
+
+def asignarLitrosAguaBombero(casilla,bombero: Bombero):
+    if (casilla == 3):
+        bombero.setLitros(1)
+        return bombero
+    elif (casilla == 4):
+        bombero.setLitros(2)
+        return bombero
+    elif(casilla == 2):
+        bombero.quitarLitro()
+        return bombero
+
+    return bombero

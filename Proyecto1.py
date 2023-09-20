@@ -1,6 +1,6 @@
 from Clases import Casilla
 from Clases import Bombero
-from Funciones import *
+from Amplitud import *
 
 
 
