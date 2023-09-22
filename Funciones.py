@@ -1,7 +1,9 @@
 from Clases import Bombero
 from Clases import Casilla
 
-def imprimir_matriz(matriz):
+
+
+def mostrarMapa(matriz):
     for fila in matriz:
         for elemento in fila:
             print(elemento, end=" ")  
@@ -16,9 +18,7 @@ def crearPosiciones(matriz):
             objetoActual = crearObjetos(elemento,fila, columna)[0]
 
             if elemento == 5:
-                bombero = Bombero(0, (fila, columna))
-                print("\nPosición del Bombero: ")
-                print("Fila: ", fila, " Columna: ", columna, "\n")
+                bombero = Bombero(0, (fila, columna), [False,0])
 
             listaObjetos.append(objetoActual)
 
@@ -45,26 +45,19 @@ def crearObjetos(tipoCasilla, fila, columna):
         argumentosCasilla = configuraciones[tipoCasilla]
         casilla = Casilla(*argumentosCasilla)
         listaDePosiciones.append(casilla)
-        
-        
-
-        print(argumentosCasilla)
     return listaDePosiciones;
 
 
 def actualizarMapa(mapaAntiguo, posicion, bombero: Bombero):
-    print("Pos mandada: ",posicion)
     filaB, columnaB = posicion
 
     for fila_idx, fila in enumerate(mapaAntiguo):
         for columna_idx, elemento in enumerate(fila):
             if(elemento == 5 and [filaB, columnaB] != [fila_idx,columna_idx]):
-                mapaAntiguo[fila_idx][columna_idx] = 0
+                mapaAntiguo[fila_idx][columna_idx] = 0     
             elif(mapaAntiguo[filaB][columnaB] in (6,4,2,3)):
                 nuevoBombero = asignarLitrosAguaBombero(mapaAntiguo[filaB][columnaB],bombero)
                 mapaAntiguo[filaB][columnaB] = 5
-
-
 
     return mapaAntiguo, nuevoBombero
 
@@ -72,13 +65,16 @@ def actualizarMapa(mapaAntiguo, posicion, bombero: Bombero):
 
 def asignarLitrosAguaBombero(casilla,bombero: Bombero):
     if (casilla == 3):
-        bombero.setLitros(1)
+        bombero.setCubeta([True,1])
         return bombero
     elif (casilla == 4):
-        bombero.setLitros(2)
+        bombero.setCubeta([True,2])
         return bombero
     elif(casilla == 2):
         bombero.quitarLitro()
+        return bombero
+    elif(casilla == 6):
+        bombero.setLitros(bombero.getCubeta()[1])
         return bombero
 
     return bombero

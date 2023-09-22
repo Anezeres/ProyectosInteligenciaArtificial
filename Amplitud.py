@@ -2,41 +2,63 @@ from collections import deque
 from Clases import *
 from Funciones import *
 
-
+global posHidrante
+global nodoPadreActual
+global nodoCreado
+#Esta función lee el mapa y me genera las casillas y el bombero
 def cicloBombero(mapa):
-
+    global nodoPadreActual
     casillas, bombero = crearPosiciones(mapa)
-    print("Numero Casillas: ", len(casillas))
+    print("Bombero: ", bombero.getPosiciones())
+    nodoPadreActual = Nodo(bombero.getPosiciones(),None, None, 0, 1)
 
     algoritmoAmplitud(casillas,bombero,mapa)
 
 def algoritmoAmplitud(casillas, bombero: Bombero, mapa):
+
+    global posHidrante
+
     fila,columna = bombero.getPosiciones()
     tuplaPosicionBombero = [(fila, columna)]
     cola = deque(tuplaPosicionBombero)
     colaDespuesBusqueda = busqueda(cola, mapa)
+    print("Buscando creación de nodos")
 
-    if(bombero.getLitros() == 0):
-        posicionesCubetas = posicionesConCubetas("Cubetas", casillas)
-        
-        print("Posiciones con Cubetas: ",posicionesCubetas)
-        
+    posicionesFuegos = posicionesDelObjeto("Fuego", casillas)
+    posicionesHidrantes = posicionesDelObjeto("Hidrante", casillas)
+    posicionesCubetas = posicionesDelObjeto("Cubetas", casillas)
+
+    if not bombero.getCubeta()[0]:
         posicionBalde = buscarCelda(mapa,colaDespuesBusqueda, posicionesCubetas)
-
-        print("Posicion Actual: ", posicionBalde)
-
+        
         nuevoMapa, bomberoCambiado = actualizarMapa(mapa, posicionBalde, bombero)
-
-        print("Litros Bombero: ", bomberoCambiado.getLitros())
-
-        imprimir_matriz(nuevoMapa)
-
         casillas, _ = crearPosiciones(nuevoMapa)
-        algoritmoAmplitud(casillas,bomberoCambiado,mapa)
+        print("MAPA")
+        mostrarMapa(nuevoMapa)
+        #algoritmoAmplitud(casillas,bomberoCambiado,mapa)
 
+    elif(bombero.getLitros() > 0):
+        posicionFuego = buscarCelda(mapa,colaDespuesBusqueda, posicionesFuegos)
+        nuevoMapa, bomberoCambiado = actualizarMapa(mapa, posicionFuego, bombero)
+        nuevoMapa[posHidrante[0]][posHidrante[1]] = 6
+        casillas, _ = crearPosiciones(nuevoMapa)
+
+        if(len(posicionesFuegos) == 0):
+            print("FINALICÉ TODO")
+            mostrarMapa(nuevoMapa)    
+        else:
+            algoritmoAmplitud(casillas,bomberoCambiado,nuevoMapa)
     else:
-        posicionesHidrantes = posicionesConCubetas("Hidrante", casillas)
-        print("Posiciones con Hidrantes: ",posicionesHidrantes)
+        posHidrante = posicionesHidrantes[0]
+        posicionHidrante = buscarCelda(mapa,colaDespuesBusqueda, posicionesHidrantes)
+        nuevoMapa, bomberoCambiado = actualizarMapa(mapa, posicionHidrante, bombero)
+        casillas, _ = crearPosiciones(nuevoMapa)
+
+        if(len(posicionesFuegos) == 0):
+            print("FINALICÉ TODO")
+            mostrarMapa(nuevoMapa)    
+        else:
+            algoritmoAmplitud(casillas,bomberoCambiado,nuevoMapa)
 
     return 0
     
@@ -44,39 +66,28 @@ def algoritmoAmplitud(casillas, bombero: Bombero, mapa):
 #Esta funciones se pueden usar en todos los metodos
 
 def busqueda(cola, mapa):
-
     elementosPrimero = obtenerElementosDelPrimero(cola)
-
-    print("Cola: ",cola)
-    print("Casillas Cercanas: ", preguntarPorCasillasCercanas(elementosPrimero, mapa))
-
     listaDisponible, listaCords = preguntarPorCasillasCercanas(elementosPrimero, mapa)
-
-    resultadoFiltrado = filtrarTuplas(listaDisponible, listaCords)
-
-    print("Resultado Filtrado: ", resultadoFiltrado)
-
+    resultadoFiltrado = filtrarDisponibles(listaDisponible, listaCords)
     agregarElementosCola(cola, resultadoFiltrado)
-
-    print("Nueva Cola: ", cola)
 
     return cola;
 
 def preguntarPorCasillasCercanas(posicion, mapa):
-    arriba = posicionDisponible(mapa,posicion[0] - 1,posicion[1])
-    abajo = posicionDisponible(mapa,posicion[0] + 1,posicion[1])
-    izquierda = posicionDisponible(mapa,posicion[0],posicion[1] - 1)
-    derecha = posicionDisponible(mapa,posicion[0],posicion[1] + 1)
+    direcciones = [(0, -1), (1, 0), (0, 1), (-1, 0)]  # Izquierda, Abajo, Derecha, Arriba
+    listaDisponible = []
+    listaCords = []
 
-    cordArriba = (posicion[0] - 1,posicion[1])
-    cordAbajo = (posicion[0] + 1,posicion[1])
-    cordizquierda = (posicion[0],posicion[1] - 1)
-    cordDerecha = (posicion[0],posicion[1] + 1)
+    for direccion in direcciones:
+        fila, columna = posicion[0] + direccion[0], posicion[1] + direccion[1]
+        listaCords.append((fila, columna))
 
-    listaDisponible = [izquierda, abajo, derecha, arriba]
-    listaCords = [cordizquierda,cordAbajo,cordDerecha,cordArriba]
+        if 0 <= fila < len(mapa) and 0 <= columna < len(mapa[0]):
+            listaDisponible.append(mapa[fila][columna])
+        else:
+            listaDisponible.append(1)  # Valor para posiciones fuera de rango
 
-    return listaDisponible, listaCords;
+    return listaDisponible, listaCords
 
 
 def posicionDisponible(matriz, fila, columna):
@@ -86,13 +97,37 @@ def posicionDisponible(matriz, fila, columna):
         return 1
     
 
-def filtrarTuplas(disponible,posiciones):
+def filtrarDisponibles(disponible,posiciones):
+    print("\nDisponible: ", disponible)
+    print("Posiciones: ", posiciones)
     resultado = []
     for tupla in posiciones:
         posicion = posiciones.index(tupla)  
         if disponible[posicion] in [0, 3, 2, 6]:
             resultado.append(tupla)
+            crearNodo(posicion, posicion)
+            
+
     return resultado
+
+
+def crearNodo(posicion, direccion):
+    global nodoCreado
+    print("\n Dirección Elegida: ", direccion)
+    movimiento= ""
+    if(direccion == 0):
+        movimiento = "←←←←←←"
+    if(direccion == 1):
+        movimiento = "↓↓↓↓↓↓"
+    if(direccion == 2):
+        movimiento = "→→→→→→"
+    if(direccion == 3):
+        movimiento = "↑↑↑↑↑↑"
+
+    print("Movimiento: ", movimiento)
+    
+    # TODO: Tienes que hacer que el ultimo nodo creado sea igual al destino y así poder ir para arriba
+    nodoCreado = Nodo(posicion,nodoPadreActual, movimiento, 0, 1)
 
 
 def obtenerElementosDelPrimero(cola):
@@ -111,7 +146,7 @@ def agregarElementosCola(cola, elementos):
             elementos_agregados.add(elemento)
 
 
-def posicionesConCubetas(objeto,casillas: Casilla):
+def posicionesDelObjeto(objeto,casillas: Casilla):
 
     if(objeto == "Cubetas"):
         seleccionadas = [casilla for casilla in casillas if casilla.litros in (1, 2)]
@@ -135,19 +170,13 @@ def encuentraPosicion(cola, destinos):
 
 
 def buscarCelda(mapa, posiciones, destino):
-    print("\n\n\nBuscando Balde") 
     colaDespuesBusqueda = busqueda(posiciones, mapa)
+    print("Cola: ", posiciones)
 
     if encuentraPosicion(posiciones,destino):
-        print("\n\nEncontré Balde")
-        print("Cola completa: ", posiciones)
-        print("Destino: ", destino)
-
         posicionesActual = posiciones[0]
         return posicionesActual
-    else: 
-        print("Cola completa: ", posiciones)
-        print("Destino: ", destino)
+    else:
         posicionesActual = buscarCelda(mapa, colaDespuesBusqueda,destino)
         return posicionesActual
 

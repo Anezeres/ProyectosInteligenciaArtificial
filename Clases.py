@@ -5,6 +5,7 @@ class Casilla:
         self.solido = solido
         self.litros = litros
         self.posicion = posicion
+        
 
     def imprimirAtributos(self):
         print("Tiene Hidrante:", self.tieneHidrante)
@@ -19,9 +20,10 @@ class Casilla:
 
 
 class Bombero:
-    def __init__(self, litrosCargados, posicion):
+    def __init__(self, litrosCargados, posicion, cubeta):
         self.litrosCargados = litrosCargados
         self.posicion = posicion
+        self.cubeta = cubeta
 
     def apagarFuego(self):
         if self.litrosCargados > 0:
@@ -40,10 +42,47 @@ class Bombero:
 
     def getLitros(self):
         return self.litrosCargados
+    
+    def getCubeta(self):
+        return self.cubeta
+    
+    def setCubeta(self, newCubeta):
+        self.cubeta = newCubeta
 
     def quitarLitro(self):
-        if self.litros == 0:
+        if self.litrosCargados == 0:
             print("Debe buscar más Agua")
         else:
-            self.litros -= 1
+            self.litrosCargados -= 1
+
+
+    def cuboVacio(self):
+        if self.getCubeta()[0] == True and self.litrosCargados == 0:
+            return True
+        else:
+            return False
+        
+
+class Nodo:
+    def __init__(self, posicion, padre, operador, profundidad, costo):
+        self.posicion = posicion
+        self.padre = padre
+        self.operador = operador
+        self.profundidad = profundidad
+        self.costo = costo
+
+    def profundidad(self):
+        self.profundidad = self.calcular_profundidad(self)
+        print(f"La profundidad del nodo es {self.profundidad}")
+
+    def operador(self):
+        print(f"El operador usado para llegar a este nodo fue {self.operador}")
+
+    def calcular_profundidad(self):
+        profundidad = 0
+        actual = self
+        while actual.padre is not None:
+            profundidad += 1
+            actual = actual.padre
+        return profundidad
 
