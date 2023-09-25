@@ -37,6 +37,9 @@ class Bombero:
         fila,columna = self.posicion
         return fila,columna;
 
+    def setPosiciones(self, newPosicion):
+        self.posicion = newPosicion
+
     def setLitros(self, cantidad):
         self.litrosCargados = cantidad
 
@@ -54,7 +57,6 @@ class Bombero:
             print("Debe buscar más Agua")
         else:
             self.litrosCargados -= 1
-
 
     def cuboVacio(self):
         if self.getCubeta()[0] == True and self.litrosCargados == 0:

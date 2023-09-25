@@ -59,6 +59,7 @@ def actualizarMapa(mapaAntiguo, posicion, bombero: Bombero):
             elif(mapaAntiguo[filaB][columnaB] in (6,4,2,3)):
                 nuevoBombero = asignarLitrosAguaBombero(mapaAntiguo[filaB][columnaB],bombero)
                 mapaAntiguo[filaB][columnaB] = 5
+                nuevoBombero.setPosiciones(posicion)
 
     return mapaAntiguo, nuevoBombero
 
@@ -85,3 +86,70 @@ def encontrarNodo(lista, posicion):
         if nodo.getPosicion() == posicion:
             return nodo
     return None  # Retorna None si no se encuentra el nodo
+
+
+
+def preguntarPorCasillasCercanas(posicion, mapa):
+    direcciones = [(0, -1), (1, 0), (0, 1), (-1, 0)]  # Izquierda, Abajo, Derecha, Arriba
+    listaDisponible = []
+    listaCords = []
+
+    for direccion in direcciones:
+        fila, columna = posicion[0] + direccion[0], posicion[1] + direccion[1]
+        listaCords.append((fila, columna))
+
+        if 0 <= fila < len(mapa) and 0 <= columna < len(mapa[0]):
+            listaDisponible.append(mapa[fila][columna])
+        else:
+            listaDisponible.append(1)  # Valor para posiciones fuera de rango
+
+    return listaDisponible, listaCords
+
+
+def posicionDisponible(matriz, fila, columna):
+    if 0 <= fila < len(matriz) and 0 <= columna < len(matriz[0]):
+        return matriz[fila][columna]
+    else:
+        return 1
+    
+
+def obtenerElementosDelPrimero(cola):
+    if cola:
+        primer_elemento = cola[0]
+        if isinstance(primer_elemento, tuple) and len(primer_elemento) == 2:
+            return list(primer_elemento)
+    return None
+
+
+
+def encuentraPosicion(cola, destinos):
+    if cola and cola[0] in destinos:
+        return True
+    return False
+
+
+def posicionesDelObjeto(objeto,casillas: Casilla):
+
+    if(objeto == "Cubetas"):
+        seleccionadas = [casilla for casilla in casillas if casilla.litros in (1, 2)]
+    elif(objeto == "Hidrante"):
+        seleccionadas = [casilla for casilla in casillas if casilla.tieneHidrante == True]
+    elif(objeto == "Fuego"):
+        seleccionadas = [casilla for casilla in casillas if casilla.tieneFuego == True]
+    posiciones = []
+
+    # Recorremos la lista de casillas y agregamos las posiciones a la lista
+    for casilla in seleccionadas:
+        posiciones.append((casilla.getPosiciones()))
+
+    return posiciones
+
+
+
+def agregarElementosCola(cola, elementos):
+    cola.popleft()
+    elementos_agregados = set()
+    for elemento in elementos:
+        if elemento not in elementos_agregados:
+            cola.append(elemento)
+            elementos_agregados.add(elemento)
