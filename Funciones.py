@@ -1,5 +1,6 @@
 from Clases import Bombero
 from Clases import Casilla
+from Clases import Nodo
 
 
 
@@ -78,3 +79,9 @@ def asignarLitrosAguaBombero(casilla,bombero: Bombero):
         return bombero
 
     return bombero
+
+def encontrarNodo(lista, posicion):
+    for nodo in lista:
+        if nodo.getPosicion() == posicion:
+            return nodo
+    return None  # Retorna None si no se encuentra el nodo

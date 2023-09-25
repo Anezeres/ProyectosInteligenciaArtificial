@@ -5,18 +5,24 @@ from Funciones import *
 global posHidrante
 global nodoPadreActual
 global nodoCreado
+global nodoDestino
+global listaNodos
 #Esta función lee el mapa y me genera las casillas y el bombero
 def cicloBombero(mapa):
     global nodoPadreActual
+    global listaNodos
+    listaNodos = []
     casillas, bombero = crearPosiciones(mapa)
     print("Bombero: ", bombero.getPosiciones())
     nodoPadreActual = Nodo(bombero.getPosiciones(),None, None, 0, 1)
+    listaNodos.append(nodoPadreActual)
 
     algoritmoAmplitud(casillas,bombero,mapa)
 
 def algoritmoAmplitud(casillas, bombero: Bombero, mapa):
 
     global posHidrante
+    global nodoDestino
 
     fila,columna = bombero.getPosiciones()
     tuplaPosicionBombero = [(fila, columna)]
@@ -30,11 +36,15 @@ def algoritmoAmplitud(casillas, bombero: Bombero, mapa):
 
     if not bombero.getCubeta()[0]:
         posicionBalde = buscarCelda(mapa,colaDespuesBusqueda, posicionesCubetas)
-        
+        nodoDestino = encontrarNodo(listaNodos,tuple(posicionBalde))
         nuevoMapa, bomberoCambiado = actualizarMapa(mapa, posicionBalde, bombero)
         casillas, _ = crearPosiciones(nuevoMapa)
         print("MAPA")
         mostrarMapa(nuevoMapa)
+
+        
+        print("MENSAJE: He encontrado el hidrante")
+        print("Camino: ", nodoDestino.recorrerCamino())
         #algoritmoAmplitud(casillas,bomberoCambiado,mapa)
 
     elif(bombero.getLitros() > 0):
@@ -66,7 +76,12 @@ def algoritmoAmplitud(casillas, bombero: Bombero, mapa):
 #Esta funciones se pueden usar en todos los metodos
 
 def busqueda(cola, mapa):
+    global nodoPadreActual
+    global nodoCreado
+    global listaNodos
+
     elementosPrimero = obtenerElementosDelPrimero(cola)
+    nodoPadreActual = encontrarNodo(listaNodos,tuple(elementosPrimero))
     listaDisponible, listaCords = preguntarPorCasillasCercanas(elementosPrimero, mapa)
     resultadoFiltrado = filtrarDisponibles(listaDisponible, listaCords)
     agregarElementosCola(cola, resultadoFiltrado)
@@ -98,14 +113,13 @@ def posicionDisponible(matriz, fila, columna):
     
 
 def filtrarDisponibles(disponible,posiciones):
-    print("\nDisponible: ", disponible)
     print("Posiciones: ", posiciones)
     resultado = []
     for tupla in posiciones:
         posicion = posiciones.index(tupla)  
         if disponible[posicion] in [0, 3, 2, 6]:
             resultado.append(tupla)
-            crearNodo(posicion, posicion)
+            crearNodo(tupla, posicion)
             
 
     return resultado
@@ -113,7 +127,8 @@ def filtrarDisponibles(disponible,posiciones):
 
 def crearNodo(posicion, direccion):
     global nodoCreado
-    print("\n Dirección Elegida: ", direccion)
+    global nodoPadreActual
+    global listaNodos
     movimiento= ""
     if(direccion == 0):
         movimiento = "←←←←←←"
@@ -123,11 +138,14 @@ def crearNodo(posicion, direccion):
         movimiento = "→→→→→→"
     if(direccion == 3):
         movimiento = "↑↑↑↑↑↑"
-
-    print("Movimiento: ", movimiento)
     
     # TODO: Tienes que hacer que el ultimo nodo creado sea igual al destino y así poder ir para arriba
+    print("\n\nPadre del Nodo: ", nodoPadreActual.getPosicion())
+    print("Posición del nodo creado: ", posicion)
+    print("Movimiento del nodo creado: ", movimiento)
     nodoCreado = Nodo(posicion,nodoPadreActual, movimiento, 0, 1)
+    listaNodos.append(nodoCreado)
+
 
 
 def obtenerElementosDelPrimero(cola):
@@ -164,17 +182,27 @@ def posicionesDelObjeto(objeto,casillas: Casilla):
 
 
 def encuentraPosicion(cola, destinos):
+
+
     if cola and cola[0] in destinos:
         return True
     return False
 
 
 def buscarCelda(mapa, posiciones, destino):
+    global nodoDestino 
+    global nodoCreado
+    global nodoPadreActual
+    global listaNodos
     colaDespuesBusqueda = busqueda(posiciones, mapa)
     print("Cola: ", posiciones)
 
     if encuentraPosicion(posiciones,destino):
         posicionesActual = posiciones[0]
+        print("Posicion Final: ", posicionesActual)
+        print("Padre Actual: ", nodoPadreActual.getPosicion())
+        print("Nodo Creado: ", nodoCreado.getPosicion())
+        nodoDestino = Nodo(posicionesActual,nodoPadreActual, "Llegada", 0, 1)
         return posicionesActual
     else:
         posicionesActual = buscarCelda(mapa, colaDespuesBusqueda,destino)

@@ -71,7 +71,7 @@ class Nodo:
         self.profundidad = profundidad
         self.costo = costo
 
-    def profundidad(self):
+    def getProfundidad(self):
         self.profundidad = self.calcular_profundidad(self)
         print(f"La profundidad del nodo es {self.profundidad}")
 
@@ -85,4 +85,21 @@ class Nodo:
             profundidad += 1
             actual = actual.padre
         return profundidad
+    
+    def recorrerCamino(self):
+        camino = [self.posicion]
+        nodo_actual = self
+
+        while nodo_actual.padre is not None:
+            nodo_actual = nodo_actual.padre
+            camino.append(nodo_actual.posicion)
+
+        return camino
+    
+
+    def getPosicion(self):
+        return self.posicion
+    
+    def getMovimiento(self):
+        return self.operador
 
