@@ -7,6 +7,12 @@ global nodoPadreActual
 global nodoCreado
 global nodoDestino
 global listaNodos
+global listaMovimientos
+
+def getListaMovimientos():
+    return listaMovimientos
+
+listaMovimientos = []
 #Esta función lee el mapa y me genera las casillas y el bombero
 def cicloBombero(mapa):
     global nodoPadreActual
@@ -22,6 +28,7 @@ def algoritmoAmplitud(casillas, bombero: Bombero, mapa):
     global nodoDestino
     global listaNodos
     global nodoPadreActual
+    global listaMovimientos
 
     if(len(listaNodos) > 1):
         listaNodos = []
@@ -44,6 +51,9 @@ def algoritmoAmplitud(casillas, bombero: Bombero, mapa):
         mostrarMapa(nuevoMapa)
 
         print("Camino Cubeta: ", nodoDestino.recorrerCamino())
+
+        listaMovimientos.append(nodoDestino.recorrerCamino())
+
         listaNodos = []
         nodoPadreActual = Nodo(bomberoCambiado.getPosiciones(),None, None, 0, 1)
         listaNodos.append(nodoPadreActual)
@@ -63,9 +73,11 @@ def algoritmoAmplitud(casillas, bombero: Bombero, mapa):
 
         if(len(posicionesFuegos) == 0):
             print("FINALICÉ TODO")
-            mostrarMapa(nuevoMapa)    
+            mostrarMapa(nuevoMapa)  
         else:
             print("Camino Fuegos: ", nodoDestino.recorrerCamino())
+            listaMovimientos.append(nodoDestino.recorrerCamino())
+            print("\nLista movimientos 1: ", listaMovimientos)
             reiniciarListaNodos(bomberoCambiado)
             algoritmoAmplitud(casillas,bomberoCambiado,nuevoMapa)
     else:
@@ -83,10 +95,13 @@ def algoritmoAmplitud(casillas, bombero: Bombero, mapa):
 
         if(len(posicionesFuegos) == 0):
             print("Camino Hidrante: ", nodoDestino.recorrerCamino())
+            listaMovimientos.append(nodoDestino.recorrerCamino())
             print("FINALICÉ TODO")
             mostrarMapa(nuevoMapa)    
         else:
             print("Camino Hidrante: ", nodoDestino.recorrerCamino())
+            listaMovimientos.append(nodoDestino.recorrerCamino())
+            print("\nLista movimientos 1: ", listaMovimientos)
             reiniciarListaNodos(bomberoCambiado)
             algoritmoAmplitud(casillas,bomberoCambiado,nuevoMapa)
 

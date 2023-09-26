@@ -5,6 +5,8 @@ from PIL import Image, ImageTk
 global ventana
 global soldier
 global lienzo
+global mapa
+global listaMovimientos
 
 import random
 
@@ -28,9 +30,10 @@ def crearSprite(x,y):
     # Crear una etiqueta para mostrar la imagen
     return imagen_tk
 
-def dibujarSprites(imagen, mapa):
+def dibujarSprites(imagen):
     global soldier
     global lienzo
+    global mapa
 
     x = 0
     y = 0
@@ -111,9 +114,15 @@ def moverSoldado(y):
         lienzo.move(soldier, 0, 16)  # Mueve el soldado 10 píxeles hacia abajo
         ventana.after(100, lambda: moverSoldado(y + 16))
 
-def generarVentana(mapa):
+def generarVentana(mapaCompleto, listMov):
     global lienzo
     global ventana
+    global mapa
+    global listaMovimientos
+    #TODO Ahora hay que hacer que cuando le de click al boton el soldado empiece a moverse por el mapa
+    listaMovimientos = listMov
+
+    mapa = mapaCompleto
 
     ventana = tk.Tk()
     ventana.title("Mostrar Primer Sprite")
@@ -123,7 +132,7 @@ def generarVentana(mapa):
     lienzo = tk.Canvas(ventana, width=640, height=640)
     lienzo.pack()
 
-    dibujarSprites(sprites,mapa)
+    dibujarSprites(sprites)
 
     boton = tk.Button(ventana, text="Botón", command=lambda: moverSoldado(0))
     boton.place(x=100, y=150)
