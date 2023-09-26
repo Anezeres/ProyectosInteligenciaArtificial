@@ -11,10 +11,8 @@ global listaNodos
 def cicloBombero(mapa):
     global nodoPadreActual
     global listaNodos
-    listaNodos = []
     casillas, bombero = crearPosiciones(mapa)
-    nodoPadreActual = Nodo(bombero.getPosiciones(),None, None, 0, 1)
-    listaNodos.append(nodoPadreActual)
+    reiniciarListaNodos(bombero)
 
     algoritmoAmplitud(casillas,bombero,mapa)
 
@@ -32,7 +30,6 @@ def algoritmoAmplitud(casillas, bombero: Bombero, mapa):
     tuplaPosicionBombero = [(fila, columna)]
     cola = deque(tuplaPosicionBombero)
     colaDespuesBusqueda = busqueda(cola, mapa)
-    #print("Cola Des Bus: ", colaDespuesBusqueda)
 
     posicionesFuegos = posicionesDelObjeto("Fuego", casillas)
     posicionesHidrantes = posicionesDelObjeto("Hidrante", casillas)
@@ -69,14 +66,10 @@ def algoritmoAmplitud(casillas, bombero: Bombero, mapa):
             mostrarMapa(nuevoMapa)    
         else:
             print("Camino Fuegos: ", nodoDestino.recorrerCamino())
-            listaNodos = []
-            nodoPadreActual = Nodo(bomberoCambiado.getPosiciones(),None, None, 0, 1)
-            listaNodos.append(nodoPadreActual)
+            reiniciarListaNodos(bomberoCambiado)
             algoritmoAmplitud(casillas,bomberoCambiado,nuevoMapa)
     else:
-        #listaNodos = []
         nodoPadreActual = Nodo(bombero.getPosiciones(),None, None, 0, 1)
-        #print("Nodo padre: ", nodoPadreActual.getPosicion())
         listaNodos.append(nodoPadreActual)
 
 
@@ -94,9 +87,7 @@ def algoritmoAmplitud(casillas, bombero: Bombero, mapa):
             mostrarMapa(nuevoMapa)    
         else:
             print("Camino Hidrante: ", nodoDestino.recorrerCamino())
-            listaNodos = []
-            nodoPadreActual = Nodo(bomberoCambiado.getPosiciones(),None, None, 0, 1)
-            listaNodos.append(nodoPadreActual)
+            reiniciarListaNodos(bomberoCambiado)
             algoritmoAmplitud(casillas,bomberoCambiado,nuevoMapa)
 
     return 0
@@ -104,15 +95,20 @@ def algoritmoAmplitud(casillas, bombero: Bombero, mapa):
 
 #Esta funciones se pueden usar en todos los metodos
 
+def reiniciarListaNodos(bomberoCambiado: Bombero):
+    global listaNodos
+    listaNodos = []
+    nodoPadreActual = Nodo(bomberoCambiado.getPosiciones(),None, None, 0, 1)
+    listaNodos.append(nodoPadreActual)
+
+
 def busqueda(cola, mapa):
     global nodoPadreActual
     global nodoCreado
     global listaNodos
 
     elementosPrimero = obtenerElementosDelPrimero(cola)
-    #print("\nNodo Padre Antes: ", nodoPadreActual)
     nodoPadreActual = encontrarNodo(listaNodos,tuple(elementosPrimero))
-    #print("Nodo Padre Despues: ", nodoPadreActual)
     listaDisponible, listaCords = preguntarPorCasillasCercanas(elementosPrimero, mapa)
     resultadoFiltrado = filtrarDisponibles(listaDisponible, listaCords)
     agregarElementosCola(cola, resultadoFiltrado)
@@ -145,9 +141,7 @@ def crearNodo(posicion, direccion):
     if(direccion == 3):
         movimiento = "↑↑↑↑↑↑"
 
-    #print("Agregando Elemento")
     nodoCreado = Nodo(posicion,nodoPadreActual, movimiento, 0, 1)
-    #print("Nodo creado:", nodoCreado)
     listaNodos.append(nodoCreado)
 
 

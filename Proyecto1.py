@@ -1,6 +1,7 @@
 from Clases import Casilla
 from Clases import Bombero
 from Amplitud import *
+from Ventana import *
 
 
 
@@ -18,4 +19,5 @@ with open(mapaTXT, "r") as archivo:
 
     print("\n\nMAPA INICIAL\n")
     mostrarMapa(mapa)
-    cicloBombero(mapa)
+    generarVentana(mapa)
+    #cicloBombero(mapa)
