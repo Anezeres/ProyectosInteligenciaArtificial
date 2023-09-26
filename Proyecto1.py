@@ -20,4 +20,4 @@ with open(mapaTXT, "r") as archivo:
     print("\n\nMAPA INICIAL\n")
     mostrarMapa(mapa)
     generarVentana(mapa)
-    #cicloBombero(mapa)
+    cicloBombero(mapa)

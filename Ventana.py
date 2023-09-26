@@ -3,6 +3,8 @@ from PIL import Image, ImageTk
 
 
 global ventana
+global soldier
+global lienzo
 
 import random
 
@@ -26,7 +28,10 @@ def crearSprite(x,y):
     # Crear una etiqueta para mostrar la imagen
     return imagen_tk
 
-def dibujar_imagenes_en_fila(lienzo, imagen, mapa):
+def dibujarSprites(imagen, mapa):
+    global soldier
+    global lienzo
+
     x = 0
     y = 0
     filas = 10
@@ -42,30 +47,25 @@ def dibujar_imagenes_en_fila(lienzo, imagen, mapa):
             lienzo.create_image(posX, posY, anchor=tk.NW, image=imagen[0])
 
             if(mapa[fila][columna] == 1):
-                imagen2 = lienzo.create_image(posX, posY, anchor=tk.NW, image=imagen[1])
-                lienzo.lift(imagen2)
+                piedra = lienzo.create_image(posX, posY, anchor=tk.NW, image=imagen[1])
+                lienzo.lift(piedra)
             elif(mapa[fila][columna] == 2):
-                imagen2 = lienzo.create_image(posX, posY, anchor=tk.NW, image=imagen[2])
-                lienzo.lift(imagen2)
+                orco = lienzo.create_image(posX, posY, anchor=tk.NW, image=imagen[2])
+                lienzo.lift(orco)
 
             elif(mapa[fila][columna] == 6):
-                imagen2 = lienzo.create_image(posX, posY, anchor=tk.NW, image=imagen[3])
-                lienzo.lift(imagen2)
+                potion = lienzo.create_image(posX, posY, anchor=tk.NW, image=imagen[3])
+                lienzo.lift(potion)
             elif(mapa[fila][columna] == 5):
-                imagen2 = lienzo.create_image(posX, posY, anchor=tk.NW, image=imagen[4])
-                lienzo.lift(imagen2)
+                soldier = lienzo.create_image(posX, posY, anchor=tk.NW, image=imagen[4])
+                lienzo.lift(soldier)
             elif(mapa[fila][columna] == 3):
-                imagen2 = lienzo.create_image(posX, posY, anchor=tk.NW, image=imagen[5])
-                lienzo.lift(imagen2)
+                sword = lienzo.create_image(posX, posY, anchor=tk.NW, image=imagen[5])
+                lienzo.lift(sword)
             elif(mapa[fila][columna] == 4):
-                imagen2 = lienzo.create_image(posX, posY, anchor=tk.NW, image=imagen[6])
-                lienzo.lift(imagen2)
+                superSword = lienzo.create_image(posX, posY, anchor=tk.NW, image=imagen[6])
+                lienzo.lift(superSword)
 
-            """ else:   
-                lienzo.create_image(posX, posY, anchor=tk.NW, image=imagen[0]) """
-
-            """ print("Fila: ", fila)
-            print("Columna: ", columna) """
 
 
 def crearSprites():
@@ -76,7 +76,7 @@ def crearSprites():
     swordPng = Image.open("Sprites/Sword.png")
     superSwordPng = Image.open("Sprites/SuperSword.png")
     potionGrande = potionPng.resize((64, 64), Image.ANTIALIAS)
-    soldierGrande = soldierPng.resize((39,62), Image.ANTIALIAS)
+    soldierGrande = soldierPng.resize((41,64), Image.ANTIALIAS)
     swordGrande = swordPng.resize((64,64), Image.ANTIALIAS)
     superSwordGrande = superSwordPng.resize((64,64), Image.ANTIALIAS)
 
@@ -102,9 +102,19 @@ def crearSprites():
 
     return sprites 
 
+def moverSoldado(y):
+    global lienzo
+    global soldier
+    
+    if y <= 64:
+        lienzo.lift(soldier)
+        lienzo.move(soldier, 0, 16)  # Mueve el soldado 10 píxeles hacia abajo
+        ventana.after(100, lambda: moverSoldado(y + 16))
 
 def generarVentana(mapa):
+    global lienzo
     global ventana
+
     ventana = tk.Tk()
     ventana.title("Mostrar Primer Sprite")
 
@@ -113,12 +123,13 @@ def generarVentana(mapa):
     lienzo = tk.Canvas(ventana, width=640, height=640)
     lienzo.pack()
 
-    """ x_inicial = 0
-    y_inicial = 100
+    dibujarSprites(sprites,mapa)
 
-    lienzo.create_image(x_inicial, y_inicial, anchor=tk.NW, image=imagen_tk) """
+    boton = tk.Button(ventana, text="Botón", command=lambda: moverSoldado(0))
+    boton.place(x=100, y=150)
 
-    dibujar_imagenes_en_fila(lienzo,sprites,mapa)
+
+    #moverSoldado(lienzo)
 
     # Ejecutar la ventana
     ventana.geometry("640x640")

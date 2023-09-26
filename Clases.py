@@ -96,6 +96,7 @@ class Nodo:
             nodo_actual = nodo_actual.padre
             camino.append(nodo_actual.posicion)
 
+        camino.reverse()
         return camino
     
 
