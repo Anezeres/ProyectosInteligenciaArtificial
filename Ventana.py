@@ -10,6 +10,10 @@ global lienzo
 global mapa
 global listaMovimientos
 global listaObjetos
+global boton1, boton2, botonVolver
+global boton3, boton4, boton5
+
+
 
 
 listaObjetos = []
@@ -145,22 +149,31 @@ def generarVentana(mapaCompleto):
     global lienzo
     global ventana
     global mapa
+    global boton1, boton2, boton3, botonVolver
+    global boton3, boton4, boton5
+
     #TODO Ahora hay que hacer que cuando le de click al boton el soldado empiece a moverse por el mapa
 
     mapa = mapaCompleto
 
     ventana = tk.Tk()
     ventana.title("Mostrar Primer Sprite")
+    botonVolver = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mensaje("Volver"))
+    boton1 = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mensaje("boton1"))
+    boton2 = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mensaje("boton2"))
+    boton3 = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mensaje("boton3"))
+    boton4 = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mensaje("boton4"))
+    boton5 = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mensaje("boton5"))
 
     sprites = crearSprites()
 
     lienzo = tk.Canvas(ventana, width=640, height=640)
     lienzo.pack()
 
-    dibujarSprites(sprites)
+    mostrarOpcionesIniciales()
+    #dibujarSprites(sprites)
 
-    boton = tk.Button(ventana, text="Botón", command=lambda: generarMovimientosAmplitud())
-    boton.place(x=100, y=150)
+    
 
 
     #moverSoldado(lienzo)
@@ -210,3 +223,88 @@ def eliminarObjeto(fila, columna):
             lienzo.delete(sublista[2])
 
 
+
+
+def mostrarOpcionesIniciales():
+    global lienzo, OpcionesImg
+    global boton1, boton2, boton3, botonVolver
+    global boton3, boton4, boton5
+    
+
+    boton1.destroy()
+    boton2.destroy()
+    boton3.destroy()
+    boton4.destroy()
+    boton5.destroy()
+    botonVolver.destroy()
+
+    boton1 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mostrarOpcionesInformada())
+    boton1.place(x=46, y=220)
+
+    boton2 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mostrarOpcionesNoInformada())
+    boton2.place(x=46, y=388)
+
+    agregarImagenMenu("Opciones")
+
+def mostrarOpcionesNoInformada():
+    global lienzo, OpcionesImg
+    global boton1, boton2, boton3, botonVolver
+
+    global boton3, boton4, boton5
+
+    boton1.destroy()
+    boton2.destroy()
+    boton3.destroy()
+    boton4.destroy()
+    boton5.destroy()
+    botonVolver.destroy()
+
+    boton3 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mensaje("Amplitud"))
+    boton3.place(x=47, y=160)
+
+    boton4 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mensaje("Costo Uniforme"))
+    boton4.place(x=47, y=327)
+
+    boton5 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mensaje("Profundidad"))
+    boton5.place(x=47, y=497)
+
+    botonVolver = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mostrarOpcionesIniciales())
+    botonVolver.place(x=47, y=600)
+
+    agregarImagenMenu("NoInformadaOpciones")
+
+def mostrarOpcionesInformada():
+    
+    global boton1, boton2, boton3, botonVolver
+    global boton3, boton4, boton5
+
+    boton1.destroy()
+    boton2.destroy()
+    boton3.destroy()
+    boton4.destroy()
+    boton5.destroy()
+    botonVolver.destroy()
+
+    boton1 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mensaje("Avara"))
+    boton1.place(x=46, y=220)
+
+    boton2 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mensaje("A*"))
+    boton2.place(x=46, y=388)
+
+    botonVolver = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mostrarOpcionesIniciales())
+    botonVolver.place(x=47, y=600)
+
+    agregarImagenMenu("InformadaOpciones")
+    
+    
+
+def agregarImagenMenu(Imagen):
+    global lienzo, OpcionesImg
+    opciones = Image.open(f"Intro/{Imagen}.png")
+    OpcionesImg = ImageTk.PhotoImage(opciones)
+    imagen = lienzo.create_image(0,0, anchor=tk.NW, image=OpcionesImg)
+    lienzo.lift(imagen)
+
+
+def mensaje(mensaje):
+    print("Mensaje: ", mensaje)
