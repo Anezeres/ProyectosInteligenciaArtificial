@@ -7,12 +7,12 @@ global nodoPadreActual
 global nodoCreado
 global nodoDestino
 global listaNodos
-global listaMovimientos
+global listaMovimientosAmplitud
 
 def getListaMovimientos():
-    return listaMovimientos
+    return listaMovimientosAmplitud
 
-listaMovimientos = []
+listaMovimientosAmplitud = []
 #Esta función lee el mapa y me genera las casillas y el bombero
 def cicloBombero(mapa):
     global nodoPadreActual
@@ -28,7 +28,7 @@ def algoritmoAmplitud(casillas, bombero: Bombero, mapa):
     global nodoDestino
     global listaNodos
     global nodoPadreActual
-    global listaMovimientos
+    global listaMovimientosAmplitud
 
     if(len(listaNodos) > 1):
         listaNodos = []
@@ -52,7 +52,7 @@ def algoritmoAmplitud(casillas, bombero: Bombero, mapa):
 
         print("Camino Cubeta: ", nodoDestino.recorrerCamino())
 
-        listaMovimientos.append(nodoDestino.recorrerCamino())
+        listaMovimientosAmplitud.append(nodoDestino.recorrerCamino())
 
         listaNodos = []
         nodoPadreActual = Nodo(bomberoCambiado.getPosiciones(),None, None, 0, 1)
@@ -76,8 +76,8 @@ def algoritmoAmplitud(casillas, bombero: Bombero, mapa):
             mostrarMapa(nuevoMapa)  
         else:
             print("Camino Fuegos: ", nodoDestino.recorrerCamino())
-            listaMovimientos.append(nodoDestino.recorrerCamino())
-            print("\nLista movimientos 1: ", listaMovimientos)
+            listaMovimientosAmplitud.append(nodoDestino.recorrerCamino())
+            print("\nLista movimientos 1: ", listaMovimientosAmplitud)
             reiniciarListaNodos(bomberoCambiado)
             algoritmoAmplitud(casillas,bomberoCambiado,nuevoMapa)
     else:
@@ -95,13 +95,13 @@ def algoritmoAmplitud(casillas, bombero: Bombero, mapa):
 
         if(len(posicionesFuegos) == 0):
             print("Camino Hidrante: ", nodoDestino.recorrerCamino())
-            listaMovimientos.append(nodoDestino.recorrerCamino())
+            listaMovimientosAmplitud.append(nodoDestino.recorrerCamino())
             print("FINALICÉ TODO")
             mostrarMapa(nuevoMapa)    
         else:
             print("Camino Hidrante: ", nodoDestino.recorrerCamino())
-            listaMovimientos.append(nodoDestino.recorrerCamino())
-            print("\nLista movimientos 1: ", listaMovimientos)
+            listaMovimientosAmplitud.append(nodoDestino.recorrerCamino())
+            print("\nLista movimientos 1: ", listaMovimientosAmplitud)
             reiniciarListaNodos(bomberoCambiado)
             algoritmoAmplitud(casillas,bomberoCambiado,nuevoMapa)
 

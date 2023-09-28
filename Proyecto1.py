@@ -19,7 +19,4 @@ with open(mapaTXT, "r") as archivo:
 
     print("\n\nMAPA INICIAL\n")
     mostrarMapa(mapa)
-    cicloBombero(mapa)
-    listaMovimientos = getListaMovimientos()
-    print("Lista movimientos: ", listaMovimientos)
-    generarVentana(mapa, listaMovimientos)
+    generarVentana(mapa)

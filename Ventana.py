@@ -1,5 +1,7 @@
 import tkinter as tk
 from PIL import Image, ImageTk
+from Amplitud import *
+import time
 
 
 global ventana
@@ -7,8 +9,11 @@ global soldier
 global lienzo
 global mapa
 global listaMovimientos
+global listaObjetos
 
-import random
+
+listaObjetos = []
+
 
 def crearSprite(x,y):
     # Cargar la hoja de sprites completa
@@ -55,7 +60,7 @@ def dibujarSprites(imagen):
             elif(mapa[fila][columna] == 2):
                 orco = lienzo.create_image(posX, posY, anchor=tk.NW, image=imagen[2])
                 lienzo.lift(orco)
-
+                agregarObjetoLista(fila,columna,orco)
             elif(mapa[fila][columna] == 6):
                 potion = lienzo.create_image(posX, posY, anchor=tk.NW, image=imagen[3])
                 lienzo.lift(potion)
@@ -65,11 +70,16 @@ def dibujarSprites(imagen):
             elif(mapa[fila][columna] == 3):
                 sword = lienzo.create_image(posX, posY, anchor=tk.NW, image=imagen[5])
                 lienzo.lift(sword)
+                agregarObjetoLista(fila,columna,sword)
             elif(mapa[fila][columna] == 4):
                 superSword = lienzo.create_image(posX, posY, anchor=tk.NW, image=imagen[6])
                 lienzo.lift(superSword)
+                agregarObjetoLista(fila,columna,superSword)
 
+def agregarObjetoLista(fila,columna,objeto):
+    global listaObjetos
 
+    listaObjetos.append([fila,columna,objeto])
 
 def crearSprites():
 
@@ -105,22 +115,37 @@ def crearSprites():
 
     return sprites 
 
-def moverSoldado(y):
+def moverSoldado(y, direccion):
     global lienzo
     global soldier
+    global ventana
     
-    if y <= 64:
-        lienzo.lift(soldier)
-        lienzo.move(soldier, 0, 16)  # Mueve el soldado 10 píxeles hacia abajo
-        ventana.after(100, lambda: moverSoldado(y + 16))
+    lienzo.lift(soldier)
 
-def generarVentana(mapaCompleto, listMov):
+    if(direccion == "Abajo"):
+        print("Movimiento: ", direccion)
+        lienzo.move(soldier, 0, 64)
+    elif(direccion == "Arriba"):
+        print("Movimiento: ", direccion)
+        lienzo.move(soldier, 0, -64)
+    elif(direccion == "Derecha"):
+        print("Movimiento: ", direccion)
+        lienzo.move(soldier, 64, 0)
+    elif(direccion == "Izquierda"):
+        print("Movimiento: ", direccion)
+        lienzo.move(soldier, -64, 0)
+
+    ventana.update()
+
+    return 0
+
+    
+
+def generarVentana(mapaCompleto):
     global lienzo
     global ventana
     global mapa
-    global listaMovimientos
     #TODO Ahora hay que hacer que cuando le de click al boton el soldado empiece a moverse por el mapa
-    listaMovimientos = listMov
 
     mapa = mapaCompleto
 
@@ -134,7 +159,7 @@ def generarVentana(mapaCompleto, listMov):
 
     dibujarSprites(sprites)
 
-    boton = tk.Button(ventana, text="Botón", command=lambda: moverSoldado(0))
+    boton = tk.Button(ventana, text="Botón", command=lambda: generarMovimientosAmplitud())
     boton.place(x=100, y=150)
 
 
@@ -143,3 +168,45 @@ def generarVentana(mapaCompleto, listMov):
     # Ejecutar la ventana
     ventana.geometry("640x640")
     ventana.mainloop()
+
+def identificarMovimientosCompletos():
+    global listaMovimientos
+
+    for lista_de_movimientos in listaMovimientos:
+
+        for i in range(1, len(lista_de_movimientos)):
+            fila_anterior, columna_anterior = lista_de_movimientos[i - 1]
+            fila_actual, columna_actual = lista_de_movimientos[i]
+
+            # Comparamos las filas y columnas para determinar la dirección
+            if fila_anterior < fila_actual:
+                direccion = "Abajo"
+            elif fila_anterior > fila_actual:
+                direccion = "Arriba"
+            elif columna_anterior < columna_actual:
+                direccion = "Derecha"
+            elif columna_anterior > columna_actual:
+                direccion = "Izquierda"
+
+            
+            moverSoldado(0, direccion)
+            eliminarObjeto(fila_actual, columna_actual)
+            time.sleep(1)
+
+def generarMovimientosAmplitud():
+    global listaMovimientos
+    cicloBombero(mapa)
+    listaMovimientos = getListaMovimientos()
+    print("Lista movimientos: ", listaMovimientos)
+    identificarMovimientosCompletos()
+
+
+def eliminarObjeto(fila, columna):
+    global listaObjetos
+    global lienzo
+
+    for sublista in listaObjetos:
+        if sublista[0] == fila and sublista[1] == columna:
+            lienzo.delete(sublista[2])
+
+
