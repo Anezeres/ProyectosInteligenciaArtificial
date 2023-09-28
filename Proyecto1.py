@@ -1,6 +1,7 @@
 from Clases import Casilla
 from Clases import Bombero
 from Amplitud import *
+from CostoUniforme import *
 from Ventana import *
 
 
@@ -19,4 +20,4 @@ with open(mapaTXT, "r") as archivo:
 
     print("\n\nMAPA INICIAL\n")
     mostrarMapa(mapa)
-    generarVentana(mapa)
+    #generarVentana(mapa)
