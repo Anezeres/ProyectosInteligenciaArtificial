@@ -165,13 +165,12 @@ def generarVentana(mapaCompleto):
     boton4 = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mensaje("boton4"))
     boton5 = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mensaje("boton5"))
 
-    sprites = crearSprites()
 
     lienzo = tk.Canvas(ventana, width=640, height=640)
     lienzo.pack()
 
     mostrarOpcionesIniciales()
-    #dibujarSprites(sprites)
+    
 
     
 
@@ -208,10 +207,17 @@ def identificarMovimientosCompletos():
 
 def generarMovimientosAmplitud():
     global listaMovimientos
+    global lienzo
+
+    destruirBotones()
+    sprites = crearSprites()
+    dibujarSprites(sprites)
+
     cicloBombero(mapa)
     listaMovimientos = getListaMovimientos()
     print("Lista movimientos: ", listaMovimientos)
     identificarMovimientosCompletos()
+    mostrarOpcionesIniciales()
 
 
 def eliminarObjeto(fila, columna):
@@ -231,12 +237,7 @@ def mostrarOpcionesIniciales():
     global boton3, boton4, boton5
     
 
-    boton1.destroy()
-    boton2.destroy()
-    boton3.destroy()
-    boton4.destroy()
-    boton5.destroy()
-    botonVolver.destroy()
+    destruirBotones()
 
     boton1 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mostrarOpcionesInformada())
     boton1.place(x=46, y=220)
@@ -249,17 +250,11 @@ def mostrarOpcionesIniciales():
 def mostrarOpcionesNoInformada():
     global lienzo, OpcionesImg
     global boton1, boton2, boton3, botonVolver
-
     global boton3, boton4, boton5
 
-    boton1.destroy()
-    boton2.destroy()
-    boton3.destroy()
-    boton4.destroy()
-    boton5.destroy()
-    botonVolver.destroy()
+    destruirBotones()
 
-    boton3 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mensaje("Amplitud"))
+    boton3 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientosAmplitud())
     boton3.place(x=47, y=160)
 
     boton4 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mensaje("Costo Uniforme"))
@@ -278,12 +273,7 @@ def mostrarOpcionesInformada():
     global boton1, boton2, boton3, botonVolver
     global boton3, boton4, boton5
 
-    boton1.destroy()
-    boton2.destroy()
-    boton3.destroy()
-    boton4.destroy()
-    boton5.destroy()
-    botonVolver.destroy()
+    destruirBotones()
 
     boton1 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mensaje("Avara"))
     boton1.place(x=46, y=220)
@@ -304,6 +294,18 @@ def agregarImagenMenu(Imagen):
     OpcionesImg = ImageTk.PhotoImage(opciones)
     imagen = lienzo.create_image(0,0, anchor=tk.NW, image=OpcionesImg)
     lienzo.lift(imagen)
+
+
+def destruirBotones():
+    global boton1, boton2, boton3, botonVolver
+    global boton3, boton4, boton5
+    
+    boton1.destroy()
+    boton2.destroy()
+    boton3.destroy()
+    boton4.destroy()
+    boton5.destroy()
+    botonVolver.destroy()
 
 
 def mensaje(mensaje):
