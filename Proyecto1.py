@@ -10,9 +10,9 @@ mapaTXT = "./Prueba1.txt"
 
 
 
+generarVentana()
 
-
-with open(mapaTXT, "r") as archivo:
+""" with open(mapaTXT, "r") as archivo:
     mapa = []
     for linea in archivo:
         lista_de_numeros = [int(numero) for numero in linea.split()]
@@ -20,4 +20,4 @@ with open(mapaTXT, "r") as archivo:
 
     print("\n\nMAPA INICIAL\n")
     mostrarMapa(mapa)
-    #generarVentana(mapa)
+    """
